@@ -11,7 +11,7 @@ use Data::Dumper;
 
 use vars qw($VERSION @ISA @EXPORT);
 
-$VERSION           = '0.01';
+$VERSION           = '0.02';
 
 require Exporter;
 @ISA = qw(Exporter);
@@ -60,6 +60,7 @@ sub XMLin {
     open(XML, $source) or croak "Can't open $source: $!";
     $Carp::CarpLevel = 2;
     $self->{Parser}->parse(*XML);
+    close(XML) or croak "Can't close $source: $!";
     chdir $cwd;
   } elsif ($source =~ /<.*>/ or UNIVERSAL::isa($source, "IO::Handle")) {
     $Carp::CarpLevel = 2;
@@ -74,6 +75,7 @@ sub XMLin {
     chdir dirname($source);
     $Carp::CarpLevel = 2;
     $self->{Parser}->parse(*XML);
+    close(XML) or croak "Can't close $source: $!";
     chdir $cwd;
   }
 
@@ -334,7 +336,7 @@ planned for later releases.
 Parses XML formatted data and returns a reference to a data structure
 which contains the same information in a more readily accessible
 form. (Skip down to L</"EXAMPLES"> for sample code).  The XML must
-have a valid &lt;!DOCTYPE> element.
+have a valid <!DOCTYPE> element.
 
 C<XMLin()> accepts an optional XML specifier, which can be one of the
 following:
