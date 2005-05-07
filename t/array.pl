@@ -2,7 +2,6 @@ $VAR1 = {
           'stuff' => [
                      {
                        'name' => 'Moose',
-                       'other' => []
                      },
                      {
                        'name' => 'Thingy',
