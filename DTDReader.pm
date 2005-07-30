@@ -11,7 +11,7 @@ use Data::Dumper;
 
 use vars qw($VERSION @ISA @EXPORT);
 
-$VERSION = '0.03';
+$VERSION = '0.04';
 
 require Exporter;
 @ISA = qw(Exporter);
@@ -59,9 +59,12 @@ sub XMLin {
     chdir $path;
     open(XML, $source) or croak "Can't open $source: $!";
     $Carp::CarpLevel = 2;
-    $self->{Parser}->parse(*XML);
-    close(XML) or croak "Can't close $source: $!";
+    eval {
+      $self->{Parser}->parse(*XML);
+    };
     chdir $cwd;
+    die $@ if $@;
+    close(XML) or croak "Can't close $source: $!";
   } elsif ($source =~ /<.*>/ or UNIVERSAL::isa($source, "IO::Handle")) {
     $Carp::CarpLevel = 2;
     $self->{Parser}->parse($source);
@@ -74,9 +77,12 @@ sub XMLin {
     my $cwd = getcwd();
     chdir dirname($source);
     $Carp::CarpLevel = 2;
-    $self->{Parser}->parse(*XML);
-    close(XML) or croak "Can't close $source: $!";
+    eval {
+      $self->{Parser}->parse(*XML);
+    };
     chdir $cwd;
+    die $@ if $@;
+    close(XML) or croak "Can't close $source: $!";
   }
 
   $self->{Data} = unref($self->{Data});
